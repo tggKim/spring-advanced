@@ -44,6 +44,20 @@ public ResponseEntity<Map<String, Object>> methodArgumentNotValidException(Metho
 
 - GlobalExceptionHandler 에서 MethodArgumentNotValidException ex 처리하도록 했다.
 
+### 2 N+1 문제
+
+```
+@EntityGraph(attributePaths = "user")
+@Query("SELECT t FROM Todo t ORDER BY t.modifiedAt DESC")
+Page<Todo> findAllByOrderByModifiedAtDesc(Pageable pageable);
+
+@EntityGraph(attributePaths = "user")
+@Query("SELECT t FROM Todo t WHERE t.id = :todoId")
+Optional<Todo> findByIdWithUser(@Param("todoId") Long todoId);
+```
+
+- @EntityGraph를 사용해서 fetch join을 사용
+
 
 
 
