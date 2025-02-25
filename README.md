@@ -38,11 +38,35 @@ public ResponseEntity<Map<String, Object>> methodArgumentNotValidException(Metho
   HttpStatus status = HttpStatus.BAD_REQUEST;
   return getErrorResponse(status, ex.getMessage());
 }
+
+public void changePassword(@Auth AuthUser authUser,@Valid @RequestBody UserChangePasswordRequest userChangePasswordRequest){...}
 ```
 
-- @Size와 @Pattern을 사용해서 @Valid  에노테이션으로 검증하도록 했고
+- @Size와 @Pattern을 사용해서 @Valid 에노테이션으로 검증하도록 했다.
+
+```
+@ExceptionHandler
+public ResponseEntity<Map<String, Object>> methodArgumentNotValidException(MethodArgumentNotValidException ex){
+  Map<String, String> errors = new HashMap<>();
+  for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
+    errors.put(fieldError.getField(), fieldError.getDefaultMessage());
+  }
+  HttpStatus status = HttpStatus.BAD_REQUEST;
+  return getErrorResponse(status, errors);
+}
+
+public ResponseEntity<Map<String, Object>> getErrorResponse(HttpStatus status, Map<String, String> message) {
+  Map<String, Object> errorResponse = new HashMap<>();
+  errorResponse.put("status", status.name());
+  errorResponse.put("code", status.value());
+  errorResponse.put("message", message);
+
+  return new ResponseEntity<>(errorResponse, status);
+}
+```
 
 - GlobalExceptionHandler 에서 MethodArgumentNotValidException ex 처리하도록 했다.
+
 
 ### 2 N+1 문제
 
