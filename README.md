@@ -58,6 +58,52 @@ Optional<Todo> findByIdWithUser(@Param("todoId") Long todoId);
 
 - @EntityGraph를 사용해서 fetch join을 사용
 
+### 3-1 예상대로 성공하는지에 대한 케이스입니다.
 
+```
+boolean matches = passwordEncoder.matches(rawPassword, encodedPassword);
+```
 
+- rawPassword와 encodedPassword의 위치를 바꾸어서 테스트가 정상적으로 작동하도록 만들었다.
 
+### 3-2-1
+
+```
+public void manager_목록_조회_시_Todo가_없다면_IRE_에러를_던진다() {
+  // given
+  long todoId = 1L;
+  given(todoRepository.findById(todoId)).willReturn(Optional.empty());
+
+  // when & then
+  InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> managerService.getManagers(todoId));
+  assertEquals("Todo not found", exception.getMessage());
+}
+```
+
+- 테스트 코드의 이름을 수정하고 비교하는 예외 메시지를 수정했다.
+
+### 3-2-2
+
+```
+InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> {
+  commentService.saveComment(authUser, todoId, request);
+});
+```
+
+- ServerException을 서비스에서 던지는 InvalidRequestException으로 교체했다.
+
+### 3-2-3
+
+```
+if(todo.getUser() == null){
+  throw new InvalidRequestException("todo의 user가 null 입니다.");
+}
+```
+
+- if문을 ManagerService에 추가해서 todo의 user가 null인지 검사하도록 수정
+
+```
+assertEquals("todo의 user가 null 입니다.", exception.getMessage());
+```
+
+- ManagerServiceTest 에서 예외 메시지 검증을 수정
