@@ -131,3 +131,34 @@ assertEquals("todo의 user가 null 입니다.", exception.getMessage());
 ```
 
 - ManagerServiceTest 에서 예외 메시지 검증을 수정
+
+### 4-1 Interceptor를 사용하여 어드민 권한 확인하고, 성공시 요청 시각과 URL 로깅하기
+
+```
+@Slf4j
+@RequiredArgsConstructor
+public class AuthInterceptor implements HandlerInterceptor {
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
+        UserRole userRole = UserRole.valueOf((String)request.getAttribute("userRole"));
+
+        // 관리자 권한이 없는 경우 403을 반환합니다.
+        if (!UserRole.ADMIN.equals(userRole)) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "관리자 권한이 없습니다.");
+            return false;
+        }
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        log.info("요청 url = {}, 요청 시각 = {}", request.getRequestURL(), dateFormat.format(new Date()));
+
+        return HandlerInterceptor.super.preHandle(request, response, handler);
+
+    }
+}
+```
+
+- 기존에 JwtFilter에 있던 권한을 확인하는 로직을 제거
+
+- AuthInterceptor를 만들어서 인터셉터에서 권한을 확인하고 로깅 정보를 찍는다.
