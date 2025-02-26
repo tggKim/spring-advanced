@@ -20,12 +20,8 @@ public class UserAdminController {
     private final UserAdminService userAdminService;
 
     @PatchMapping("/admin/users/{userId}")
-    public ResponseEntity<Map<String,String>> changeUserRole(@PathVariable("userId") long userId, @RequestBody UserRoleChangeRequest userRoleChangeRequest) {
+    public void changeUserRole(@PathVariable("userId") long userId, @RequestBody UserRoleChangeRequest userRoleChangeRequest) {
         System.out.println(userRoleChangeRequest.getRole());
         userAdminService.changeUserRole(userId, userRoleChangeRequest);
-
-        Map<String,String> map = new HashMap<>();
-        map.put("message", "테스트 응답");
-        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 }
