@@ -162,3 +162,63 @@ public class AuthInterceptor implements HandlerInterceptor {
 - 기존에 JwtFilter에 있던 권한을 확인하는 로직을 제거
 
 - AuthInterceptor를 만들어서 인터셉터에서 권한을 확인하고 로깅 정보를 찍는다.
+
+### 4-2 AOP를 사용하여 로그찍기
+
+```
+@Aspect
+@Component
+@Slf4j
+public class AuthAspect {
+    @Around("execution(* org.example.expert.domain.user.controller.UserAdminController.changeUserRole(..))" +
+            " || execution(* org.example.expert.domain.comment.controller.CommentAdminController.deleteComment(..))")
+    public Object logRequestAndResponse(ProceedingJoinPoint joinPoint) throws  Throwable{
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        ServletRequestAttributes attributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+        if(request == null){
+            return joinPoint.proceed();
+        }
+        HttpServletResponse response = attributes.getResponse();
+
+        ContentCachingRequestWrapper wrappedRequest = (ContentCachingRequestWrapper) request;
+
+        String requestBody = new String(wrappedRequest.getContentAsByteArray(), StandardCharsets.UTF_8);
+
+        log.info("[AOP] 요청 시각 = {}", dateFormat.format(new Date()));
+        log.info("[AOP] 사용자 ID = {}", request.getAttribute("userId"));
+        log.info("[AOP] 요청 URL = {}", request.getRequestURL());
+        log.info("[AOP] 요청 본문 = {}", requestBody);
+
+        Object result = joinPoint.proceed();
+
+        if(result == null){
+            log.info("[AOP] 응답 본문이 비어있습니다.");
+        }
+        else{
+            ResponseEntity responseEntity = (ResponseEntity) result;
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            String responseString = objectMapper.writeValueAsString(responseEntity.getBody());
+
+            log.info("[AOP] 응답 본문 = {}", responseString);
+        }
+
+
+        log.info("[AOP] 종료시간 = {}", dateFormat.format(new Date()));
+
+        return result;
+    }
+}
+```
+
+- 포인트컷으로 UserAdminController의 changeUserRole() 와 CommentAdminController의 deleteComment()에 AOP 적용
+
+- 필터에서 요청을 ContentCachingRequestWrapper로 캐싱해서 AOP에서 요청의 본문을 읽도록 했다 -> request.getInputStream()은 한번만 사용이 가능하므로 ContentCachingRequestWrapper로 캐싱하는 작업이 필요함
+
+- 사용자의 ID, API 요청 시각, API 요청 URL, 요청 본문, 응답 본문을 로그로 력
+
+
+
