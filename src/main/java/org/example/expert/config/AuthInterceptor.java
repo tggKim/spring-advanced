@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.expert.domain.user.enums.UserRole;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -31,7 +32,8 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        log.info("요청 url = {}, 요청 시각 = {}", request.getRequestURL(), dateFormat.format(new Date()));
+        log.info("Interceptor 요청 URL = {}", request.getRequestURL());
+        log.info("Interceptor 요청 시각 = {}", dateFormat.format(new Date()));
 
         return HandlerInterceptor.super.preHandle(request, response, handler);
 

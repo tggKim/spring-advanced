@@ -11,8 +11,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.expert.domain.user.enums.UserRole;
+import org.springframework.web.util.ContentCachingRequestWrapper;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -30,10 +33,12 @@ public class JwtFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
+        ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(httpRequest);
+
         String url = httpRequest.getRequestURI();
 
         if (url.startsWith("/auth")) {
-            chain.doFilter(request, response);
+            chain.doFilter(wrappedRequest, response);
             return;
         }
 
@@ -59,7 +64,7 @@ public class JwtFilter implements Filter {
             httpRequest.setAttribute("email", claims.get("email"));
             httpRequest.setAttribute("userRole", claims.get("userRole"));
 
-            chain.doFilter(request, response);
+            chain.doFilter(wrappedRequest, response);
         } catch (SecurityException | MalformedJwtException e) {
             log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.", e);
             httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않는 JWT 서명입니다.");
@@ -70,7 +75,6 @@ public class JwtFilter implements Filter {
             log.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.", e);
             httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "지원되지 않는 JWT 토큰입니다.");
         } catch (Exception e) {
-            System.out.println("필터에서 유효하지않음");
             log.error("Invalid JWT token, 유효하지 않는 JWT 토큰 입니다.", e);
             httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "유효하지 않는 JWT 토큰입니다.");
         }
