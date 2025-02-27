@@ -44,7 +44,13 @@ public class AuthAspect {
         log.info("[AOP] 요청 시각 = {}", dateFormat.format(new Date()));
         log.info("[AOP] 사용자 ID = {}", request.getAttribute("userId"));
         log.info("[AOP] 요청 URL = {}", request.getRequestURL());
-        log.info("[AOP] 요청 본문 = {}", requestBody);
+
+        if(requestBody.isBlank()){
+            log.info("[AOP] 요청 본문이 비어있습니다.");
+        }
+        else{
+            log.info("[AOP] 요청 본문 = {}", requestBody);
+        }
 
         Object result = joinPoint.proceed();
 

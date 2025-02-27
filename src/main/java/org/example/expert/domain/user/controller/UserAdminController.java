@@ -21,7 +21,6 @@ public class UserAdminController {
 
     @PatchMapping("/admin/users/{userId}")
     public void changeUserRole(@PathVariable("userId") long userId, @RequestBody UserRoleChangeRequest userRoleChangeRequest) {
-        System.out.println(userRoleChangeRequest.getRole());
         userAdminService.changeUserRole(userId, userRoleChangeRequest);
     }
 }
