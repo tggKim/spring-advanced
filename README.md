@@ -218,7 +218,7 @@ public class AuthAspect {
 
 - 필터에서 요청을 ContentCachingRequestWrapper로 캐싱해서 AOP에서 요청의 본문을 읽도록 했다 -> request.getInputStream()은 한번만 사용이 가능하므로 ContentCachingRequestWrapper로 캐싱하는 작업이 필요함
 
-- 사용자의 ID, API 요청 시각, API 요청 URL, 요청 본문, 응답 본문을 로그로 력
+- 사용자의 ID, API 요청 시각, API 요청 URL, 요청 본문, 응답 본문을 로그로 출력
 
 
 
