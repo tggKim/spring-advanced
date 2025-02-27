@@ -222,6 +222,8 @@ public class AuthAspect {
 
 ### 6 테스트 코드 커버리지
 
+시간이 부족해서 따로 테스트 코드를 작성하지는 못했습니다.
+
 ![image](https://github.com/user-attachments/assets/cf1145ef-4a66-4f6c-b2ff-38f2ed1212d9)
 
 ![image](https://github.com/user-attachments/assets/1bcc35c7-00f3-4aae-a57f-bf327fb723e9)
