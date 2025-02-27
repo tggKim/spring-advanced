@@ -220,5 +220,13 @@ public class AuthAspect {
 
 - 사용자의 ID, API 요청 시각, API 요청 URL, 요청 본문, 응답 본문을 로그로 출력
 
+### 6 테스트 코드 커버리지
+
+![image](https://github.com/user-attachments/assets/cf1145ef-4a66-4f6c-b2ff-38f2ed1212d9)
+
+![image](https://github.com/user-attachments/assets/1bcc35c7-00f3-4aae-a57f-bf327fb723e9)
+
+![image](https://github.com/user-attachments/assets/b3a7cf92-a5c8-47c3-84aa-e77be8a28e5b)
+
 
 
